@@ -8,8 +8,8 @@ st.markdown("""
     <style>
     
     .stApp {
-        background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT-vmlvuNFA7ztceIoawtRYmMtYJUrmctRzg&s');
-        background-size: cover; /* Cubre el área manteniendo proporción */
+        background-image: url('https://images.unsplash.com/photo-1509228468518-180dd48219d1?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover; 
         background-position: center center;
         background-attachment: fixed;
         background-repeat: no-repeat;
@@ -20,33 +20,24 @@ st.markdown("""
         content: "";
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(255, 255, 255, 0.8); 
+        background-color: rgba(255, 255, 255, 0.85); 
         z-index: -1;
     }
 
     
     div[data-baseweb="input"] {
-        background-color: #3b82f6 !important; /* Azul más vibrante */
+        background-color: #3b82f6 !important; 
         border: 2px solid #1e3a8a !important;
         border-radius: 4px !important;
     }
 
-   
+    
     input {
-        color: #000000 !important; /* Negro puro */
+        color: #000000 !important; 
         -webkit-text-fill-color: #000000 !important; 
         text-align: center !important;
         font-weight: bold !important;
         font-size: 1.2rem !important;
-    }
-
-    
-    .pista-num {
-        font-size: 13px;
-        color: #1e3a8a;
-        font-weight: 800;
-        margin-bottom: -5px;
-        text-align: center;
     }
     
     
@@ -76,8 +67,6 @@ for i, l in enumerate(p6): solucion[(4, 11 + i)] = l
 p4 = "RIC"
 for i, l in enumerate(p4): solucion[(9, 6 + i)] = l
 
-clue_nums = {(2, 4): "1", (1, 4): "2", (2, 7): "3", (9, 6): "4", (1, 14): "5", (4, 11): "6"}
-
 
 st.markdown("<h1 style='text-align: center; color: #1e3a8a;'>📊 Crucigrama de Estadística Descriptiva</h1>", unsafe_allow_html=True)
 st.write("")
@@ -95,10 +84,7 @@ with center_col:
         for c in range(max_col):
             with cols[c]:
                 if (r, c) in solucion:
-                    num = clue_nums.get((r, c), "")
-                    if num:
-                        st.markdown(f'<p class="pista-num">{num}</p>', unsafe_allow_html=True)
-                    
+                    # Se eliminó la parte que mostraba 'clue_nums'
                     user_inputs[(r, c)] = st.text_input(
                         label=f"c{r}{c}",
                         value="",
@@ -110,7 +96,11 @@ with center_col:
                     st.write("")
 
 st.write("")
-if st.button("VERIFICAR RESULTADOS", type="primary"):
+col1, col2, col3 = st.columns([2, 2, 2])
+with col2:
+    btn_verificar = st.button("VERIFICAR RESULTADOS", type="primary", use_container_width=True)
+
+if btn_verificar:
     aciertos = 0
     for (r, c), letra in user_inputs.items():
         if letra.strip().upper() == solucion[(r, c)]:
@@ -122,7 +112,7 @@ if st.button("VERIFICAR RESULTADOS", type="primary"):
     else:
         st.info(f"Has completado {aciertos} letras correctamente de {len(solucion)}.")
 
-# --- DEFINICIONES ---
+
 st.markdown("<br>", unsafe_allow_html=True)
 col_p1, col_p2 = st.columns(2)
 with col_p1:
