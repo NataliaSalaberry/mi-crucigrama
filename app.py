@@ -119,9 +119,9 @@ with col_p1:
     st.markdown("""
     <div class="pistas-box">
     <h3>HORIZONTALES</h3>
-    <b>1.</b> Disciplina que permite describir datos.<br>
-    <b>4.</b> Medida que brinda el 50% central de una distribución.<br>
-    <b>6.</b> Medida que brinda la mitad de una distribución.
+    <b> Disciplina que permite describir datos.<br>
+    <b> Medida que brinda el 50% central de una distribución.<br>
+    <b> Medida que brinda la mitad de una distribución.
     </div>
     """, unsafe_allow_html=True)
 
@@ -129,8 +129,8 @@ with col_p2:
     st.markdown("""
     <div class="pistas-box">
     <h3>VERTICALES</h3>
-    <b>2.</b> Valor que acumula un porcentaje de datos en la distribución.<br>
-    <b>3.</b> Medida de la falta de simetría de una distribución.<br>
-    <b>5.</b> Medida de dispersión o variabilidad.
+    <b> Valor que acumula un porcentaje de datos en la distribución.<br>
+    <b> Medida de la falta de simetría de una distribución.<br>
+    <b> Medida de dispersión o variabilidad.
     </div>
     """, unsafe_allow_html=True)
