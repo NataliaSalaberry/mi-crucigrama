@@ -3,88 +3,86 @@ import streamlit as st
 # Configuración de la página
 st.set_page_config(page_title="Crucigrama de Estadística", layout="wide")
 
-# --- ESTILO CSS PERSONALIZADO ---
-st.markdown(f"""
+# --- ESTILO CSS CORREGIDO ---
+st.markdown("""
     <style>
-    /* Imagen de fondo con transparencia */
-    .stApp {{
-        background-color: rgba(255, 255, 255, 0.85);
-    }}
-    .stApp::before {{
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
+    /* 1. Imagen de fondo con mayor prioridad */
+    .stApp {
         background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT-vmlvuNFA7ztceIoawtRYmMtYJUrmctRzg&s');
         background-size: cover;
         background-position: center;
-        opacity: 0.15;
+        background-attachment: fixed;
+    }
+    
+    /* Capa blanca semitransparente para que se lea el texto */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(255, 255, 255, 0.85); /* Controla la transparencia aquí */
         z-index: -1;
-    }}
+    }
 
-    /* Estilo de los cuadraditos azules */
-    div[data-baseweb="input"] {{
+    /* 2. Forzar el color AZUL OSCURO en los cuadraditos de entrada */
+    div[data-baseweb="input"] {
         background-color: #002366 !important;
-        border-radius: 5px;
-        border: 1px solid #004080;
-    }}
-    input {{
+        border: 1px solid #004080 !important;
+    }
+
+    /* 3. Forzar el color de la LETRA BLANCA y centrarla */
+    input {
         color: white !important;
+        -webkit-text-fill-color: white !important; /* Necesario para algunos navegadores */
         text-align: center !important;
         font-weight: bold !important;
-        font-size: 20px !important;
-    }}
-    
-    /* Etiquetas de números de pistas */
-    .pista-num {{
-        font-size: 10px;
+        caret-color: white !important; /* El cursor también blanco */
+    }
+
+    /* 4. Estilo de los números de las pistas */
+    .pista-num {
+        font-size: 12px;
         color: #002366;
         font-weight: bold;
-        margin-bottom: -15px;
-    }}
+        margin-bottom: -10px;
+        text-align: center;
+    }
     
-    /* Área de definiciones */
-    .pistas-box {{
+    /* 5. Contenedor de definiciones */
+    .pistas-box {
         background-color: rgba(255, 255, 255, 0.9);
-        padding: 20px;
+        padding: 15px;
         border-radius: 10px;
-        border: 1px solid #d5dbdb;
-        color: #2e4053;
-    }}
+        border: 1px solid #002366;
+        color: #002366;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 # --- LÓGICA DEL CRUCIGRAMA ---
 solucion = {}
-# 1. ESTADISTICA (H - Fila 2)
 p1 = "ESTADISTICA"
 for i, l in enumerate(p1): solucion[(2, 4 + i)] = l
-# 2. PERCENTIL (V - Columna 4)
 p2 = "PERCENTIL"
 for i, l in enumerate(p2): solucion[(1 + i, 4)] = l
-# 3. ASIMETRIA (V - Columna 7)
 p3 = "ASIMETRIA"
 for i, l in enumerate(p3): solucion[(2 + i, 7)] = l
-# 5. VARIANZA (V - Columna 14) 
 p5 = "VARIANZA"
 for i, l in enumerate(p5): solucion[(1 + i, 14)] = l
-# 6. MEDIANA (H - Fila 4)
 p6 = "MEDIANA"
 for i, l in enumerate(p6): solucion[(4, 11 + i)] = l
-# 4. RIC (H - Fila 9)
 p4 = "RIC"
 for i, l in enumerate(p4): solucion[(9, 6 + i)] = l
 
 clue_nums = {(2, 4): "1", (1, 4): "2", (2, 7): "3", (9, 6): "4", (1, 14): "5", (4, 11): "6"}
 
 # --- INTERFAZ ---
-st.title("📊 Crucigrama de Estadística Descriptiva")
-st.write("Completa el crucigrama y pulsa el botón para verificar.")
+st.markdown("<h1 style='text-align: center; color: #002366;'>📊 Crucigrama de Estadística Descriptiva</h1>", unsafe_allow_html=True)
+st.write("")
 
-# Crear el tablero
+# Crear el tablero usando columnas
 max_row, max_col = 11, 18
 user_inputs = {}
 
-# Generar la cuadrícula
 for r in range(max_row):
     cols = st.columns(max_col)
     for c in range(max_col):
@@ -93,11 +91,10 @@ for r in range(max_row):
                 num = clue_nums.get((r, c), "")
                 if num:
                     st.markdown(f'<p class="pista-num">{num}</p>', unsafe_allow_html=True)
-                else:
-                    st.write("") # Espacio para alinear
                 
+                # Widget de entrada
                 user_inputs[(r, c)] = st.text_input(
-                    label=f"cell_{r}_{c}",
+                    label=f"c{r}{c}",
                     value="",
                     max_chars=1,
                     key=f"{r}_{c}",
@@ -106,8 +103,12 @@ for r in range(max_row):
             else:
                 st.write("")
 
-# --- VERIFICACIÓN ---
-if st.button("VERIFICAR RESULTADOS"):
+st.write("")
+col_btn, _ = st.columns([1, 4])
+with col_btn:
+    verificar = st.button("VERIFICAR RESULTADOS")
+
+if verificar:
     aciertos = 0
     for (r, c), letra in user_inputs.items():
         if letra.strip().upper() == solucion[(r, c)]:
@@ -117,10 +118,10 @@ if st.button("VERIFICAR RESULTADOS"):
         st.balloons()
         st.success(f"¡Excelente! Todo está correcto ({aciertos}/{len(solucion)})")
     else:
-        st.warning(f"Has acertado {aciertos} letras de {len(solucion)}. ¡Sigue intentando!")
+        st.info(f"Has completado {aciertos} letras correctamente de {len(solucion)}.")
 
 # --- DEFINICIONES ---
-st.markdown("---")
+st.markdown("<br>", unsafe_allow_html=True)
 col_p1, col_p2 = st.columns(2)
 with col_p1:
     st.markdown("""
