@@ -124,7 +124,7 @@ with col_p1:
     <h3>HORIZONTALES</h3>
     <b> Disciplina que permite describir datos.<br>
     <b> Medida que brinda el 50% central de una distribución.<br>
-    <b> Medida que brinda la mitad de una distribución.
+    <b> Medida que indica la mitad de una distribución.
     </div>
     """, unsafe_allow_html=True)
 
