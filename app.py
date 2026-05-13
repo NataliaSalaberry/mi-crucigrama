@@ -71,6 +71,9 @@ for i, l in enumerate(p4): solucion[(9, 6 + i)] = l
 st.markdown("<h1 style='text-align: center; color: #1e3a8a;'>📊 Crucigrama de Estadística Descriptiva</h1>", unsafe_allow_html=True)
 st.write("")
 
+st.markdown("<h2 style='text-align: center; color: #1e3a8a;'>Elaborado por Natalia Salaberry</h2>", unsafe_allow_html=True)
+st.write("")
+
 
 max_row, max_col = 11, 18
 user_inputs = {}
@@ -131,6 +134,6 @@ with col_p2:
     <h3>VERTICALES</h3>
     <b> Valor que acumula un porcentaje de datos en la distribución.<br>
     <b> Medida de la falta de simetría de una distribución.<br>
-    <b> Medida de dispersión o variabilidad.
+    <b> Medida de variabilidad.
     </div>
     """, unsafe_allow_html=True)
