@@ -71,7 +71,7 @@ for i, l in enumerate(p4): solucion[(9, 6 + i)] = l
 st.markdown("<h1 style='text-align: center; color: #1e3a8a;'>📊 Crucigrama de Estadística Descriptiva</h1>", unsafe_allow_html=True)
 st.write("")
 
-st.markdown("<h2 style='text-align: center; color: #1e3a8a;'>Elaborado por Natalia Salaberry</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; color: #1e3a8a;font-size: 14px;'>Elaborado por Natalia Salaberry</h2>", unsafe_allow_html=True)
 st.write("")
 
 
