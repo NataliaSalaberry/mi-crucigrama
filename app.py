@@ -9,7 +9,7 @@ st.set_page_config(page_title="Juego de Etapas: Estadística", layout="wide")
 if 'etapa' not in st.session_state:
     st.session_state.etapa = 1
 
-# Estilos CSS originales adaptados
+# Estilos CSS originales
 st.markdown("""
     <style>
     .stApp {
@@ -71,7 +71,6 @@ if st.session_state.etapa == 1:
     st.markdown("<p class='etapa-header'>📊 Etapa 1: Crucigrama de Estadística Descriptiva</p>", unsafe_allow_html=True)
     st.markdown("<p class='autor-header'>Elaborado por Natalia Salaberry</p>", unsafe_allow_html=True)
     
-    # Lógica de solución del crucigrama original
     solucion = {}
     p1 = "ESTADISTICA"
     for i, l in enumerate(p1): solucion[(2, 4 + i)] = l
@@ -116,12 +115,8 @@ if st.session_state.etapa == 1:
         aciertos = sum(1 for (r, c), letra in user_inputs.items() if letra.strip().upper() == solucion[(r, c)])
         
         if aciertos == len(solucion):
-            st.balloons()
-            st.success(f"¡Excelente! Todo está correcto ({aciertos}/{len(solucion)}). ¡Has desbloqueado el siguiente nivel!")
-            # El botón ahora cambia el estado directamente en lugar de usar un callback con rerun
-            if st.button("Avanzar a la Etapa 2 ➡️", use_container_width=True):
-                st.session_state.etapa = 2
-                st.rerun()
+            st.session_state.etapa = 2  # Cambiamos de etapa inmediatamente
+            st.rerun()                 # Forzamos el salto limpio a la Etapa 2
         else:
             st.error(f"Has completado {aciertos} letras correctamente de {len(solucion)}. ¡Sigue intentando!")
 
@@ -168,10 +163,8 @@ elif st.session_state.etapa == 2:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_2 == 5:
-                st.success("¡Correcto! La desviación estándar es la raíz cuadrada de la varianza.")
-                if st.button("Avanzar a la Etapa 3 ➡️", use_container_width=True):
-                    st.session_state.etapa = 3
-                    st.rerun()
+                st.session_state.etapa = 3
+                st.rerun()
             else:
                 st.error("Respuesta incorrecta. Recuerda la relación matemática entre ambas medidas.")
 
@@ -200,10 +193,8 @@ elif st.session_state.etapa == 3:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if opcion_3 == "Asimetría Positiva (A la derecha)":
-                st.success("¡Exacto! Los valores extremadamente altos (atípicos) arrastran a la media hacia la derecha.")
-                if st.button("Avanzar a la Etapa 4 ➡️", use_container_width=True):
-                    st.session_state.etapa = 4
-                    st.rerun()
+                st.session_state.etapa = 4
+                st.rerun()
             else:
                 st.error("Incorrecto. Piensa hacia dónde se desplaza la media cuando hay valores muy altos.")
 
@@ -231,10 +222,8 @@ elif st.session_state.etapa == 4:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_4 == 18:
-                st.success("¡Brillante! El Rango Intercuartílico es 18.")
-                if st.button("Avanzar a la Etapa Final ➡️", use_container_width=True):
-                    st.session_state.etapa = 5
-                    st.rerun()
+                st.session_state.etapa = 5
+                st.rerun()
             else:
                 st.error("Incorrecto. La fórmula del RIC solo requiere dos de esos datos.")
 
