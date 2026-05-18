@@ -14,7 +14,7 @@ if 'etapa' not in st.session_state:
 if 'tiempo_limite' not in st.session_state:
     st.session_state.tiempo_limite = None
 
-# Solución del crucigrama mapeada globalmente
+# Mapeo de la solución del crucigrama (Coordenadas exactas de las celdas activas)
 solucion_crucigrama = {
     (2, 4): "E", (2, 5): "S", (2, 6): "T", (2, 7): "A", (2, 8): "D", (2, 9): "I", (2, 10): "S", (2, 11): "T", (2, 12): "I", (2, 13): "C", (2, 14): "A",
     (1, 4): "P", (3, 4): "R", (4, 4): "C", (5, 4): "E", (6, 4): "N", (7, 4): "T", (8, 4): "I", (9, 4): "L",
@@ -24,9 +24,15 @@ solucion_crucigrama = {
     (9, 6): "R", (9, 8): "C"
 }
 
-# Inicializar las respuestas del crucigrama en session_state de forma segura
+# Inicializar y asegurar las llaves del crucigrama en session_state (Previene KeyError)
 if 'respuestas_crucigrama' not in st.session_state:
-    st.session_state.respuestas_crucigrama = {str(k): "" for k in solucion_crucigrama.keys()}
+    st.session_state.respuestas_crucigrama = {}
+
+# Forzar que existan todas las llaves necesarias en formato string limpio ("fila_columna")
+for (r, c) in solucion_crucigrama.keys():
+    clave_celda = f"{r}_{c}"
+    if clave_celda not in st.session_state.respuestas_crucigrama:
+        st.session_state.respuestas_crucigrama[clave_celda] = ""
 
 # Estilos CSS (Incluye el contador flotante abajo a la derecha)
 st.markdown("""
@@ -79,7 +85,7 @@ st.markdown("""
         font-size: 18px;
         margin-bottom: 20px;
     }
-    /* El contador ya no ocupa espacio lateral, flota de forma fija abajo */
+    /* El contador no consume maquetación principal, se ubica fijo abajo a la derecha */
     .contador-flotante {
         position: fixed;
         bottom: 20px;
@@ -108,17 +114,18 @@ st.markdown("""
 
 
 # =====================================================================
-# LÓGICA DEL CONTADOR DE TIEMPO (FLEXIBLE Y INVISIBLE EN MAQUETACIÓN)
+# LÓGICA DEL CONTADOR DE TIEMPO (POSICIONAMIENTO POR CAPA CSS)
 # =====================================================================
 if 0 < st.session_state.etapa < 5:
     if st.session_state.tiempo_limite is not None:
         tiempo_restante = int(st.session_state.tiempo_limite - time.time())
         
-        # Límite de tiempo agotado
+        # El tiempo se agotó
         if tiempo_restante <= 0:
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
-            st.session_state.respuestas_crucigrama = {str(k): "" for k in solucion_crucigrama.keys()}
+            # Limpiar respuestas
+            st.session_state.respuestas_crucigrama = {f"{r}_{c}": "" for (r, c) in solucion_crucigrama.keys()}
             st.error("⏰ ¡Te quedaste sin tiempo, vuelve a intentarlo!")
             time.sleep(3)
             st.rerun()
@@ -126,7 +133,7 @@ if 0 < st.session_state.etapa < 5:
         minutos = tiempo_restante // 60
         segundos = tiempo_restante % 60
         
-        # Renderizado del componente flotante abajo a la derecha
+        # Renderizado estético del div flotante
         clase_alerta = " contador-alerta" if tiempo_restante <= 60 else ""
         st.markdown(
             f'<div class="contador-flotante{clase_alerta}">'
@@ -164,7 +171,7 @@ if st.session_state.etapa == 0:
 
 
 # =====================================================================
-# ETAPA 1: EL CRUCIGRAMA (SISTEMA DE PERSISTENCIA BASADO EN LLAVES)
+# ETAPA 1: EL CRUCIGRAMA (FIX DE PERSISTENCIA Y KEYERROR)
 # =====================================================================
 elif st.session_state.etapa == 1:
     st.markdown("<p class='etapa-header'>📊 Etapa 1: Resolver el Crucigrama</p>", unsafe_allow_html=True)
@@ -177,14 +184,14 @@ elif st.session_state.etapa == 1:
             cols = st.columns(max_col)
             for c in range(max_col):
                 with cols[c]:
-                    coord_str = str((r, c))
+                    clave_celda = f"{r}_{c}"
                     if (r, c) in solucion_crucigrama:
-                        # Usamos el key de manera directa para mapear la persistencia sin pérdidas de render
-                        st.session_state.respuestas_crucigrama[coord_str] = st.text_input(
-                            label=f"c_{r}_{c}",
-                            value=st.session_state.respuestas_crucigrama[coord_str],
+                        # Asignación segura vinculando el value directamente al session_state
+                        st.session_state.respuestas_crucigrama[clave_celda] = st.text_input(
+                            label=f"input_{r}_{c}",
+                            value=st.session_state.respuestas_crucigrama[clave_celda],
                             max_chars=1,
-                            key=f"input_celda_{r}_{c}",
+                            key=f"celda_widget_{r}_{c}",
                             label_visibility="collapsed"
                         )
                     else:
@@ -198,7 +205,7 @@ elif st.session_state.etapa == 1:
     if btn_verificar:
         aciertos = 0
         for (r, c), letra_correcta in solucion_crucigrama.items():
-            letra_usuario = st.session_state.respuestas_crucigrama[str((r, c))]
+            letra_usuario = st.session_state.respuestas_crucigrama[f"{r}_{c}"]
             if letra_usuario.strip().upper() == letra_correcta:
                 aciertos += 1
         
@@ -376,5 +383,5 @@ elif st.session_state.etapa == 5:
         if st.button("🔄 Volver a jugar", type="secondary", use_container_width=True):
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
-            st.session_state.respuestas_crucigrama = {str(k): "" for k in solucion_crucigrama.keys()}
+            st.session_state.respuestas_crucigrama = {f"{r}_{c}": "" for (r, c) in solucion_crucigrama.keys()}
             st.rerun()
