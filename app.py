@@ -381,7 +381,7 @@ elif st.session_state.etapa == 5:
         
         # Gráfico de una distribución platicúrtica 
         x = np.linspace(-4, 4, 100)
-        y = np.where(np.abs(x) <= 3, 0.15 * (1 + np.cos(np.pi * x / 3)), 0) + 0.2
+        y = np.where(np.abs(x) <= 3, 0.15 * (1 + np.cos(np.pi * x / 3)), 0) + 0.01
         
         df_curtosis = pd.DataFrame({
             "Precio del Activo": x,
