@@ -156,7 +156,7 @@ if st.session_state.etapa == 0:
         seis etapas, que incluyen resolver actividades conceptuales y prácticas. <br><br>
         Para poder superar cada etapa y escapar con éxito de la encrucijada, deberás resolver en orden 
         consecutivo las mismas. Una vez que completes con éxito una etapa, selecciona en el botón 
-        inferior para pasar a la siguiente. **Cuentas con un tiempo máximo de 3 minutos por cada etapa.**
+        inferior para pasar a la siguiente. Cuentas con un tiempo máximo de 3 minutos por cada etapa.
         </div>
         """, unsafe_allow_html=True)
         
