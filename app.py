@@ -5,9 +5,9 @@ import streamlit as st
 # =====================================================================
 st.set_page_config(page_title="Juego de Etapas: Estadística", layout="wide")
 
-# Inicialización del estado del juego (Etapa actual)
+# Inicialización del estado del juego (Etapa 0: Presentación)
 if 'etapa' not in st.session_state:
-    st.session_state.etapa = 1
+    st.session_state.etapa = 0
 
 # Estilos CSS originales
 st.markdown("""
@@ -40,7 +40,7 @@ st.markdown("""
     }
     .pistas-box {
         background-color: rgba(255, 255, 255, 0.95);
-        padding: 20px;
+        padding: 25px;
         border-radius: 10px;
         border: 2px solid #1e3a8a;
         color: #1e3a8a;
@@ -65,9 +65,35 @@ st.markdown("""
 
 
 # =====================================================================
+# ETAPA 0: PRESENTACIÓN DEL JUEGO
+# =====================================================================
+if st.session_state.etapa == 0:
+    st.markdown("<p class='etapa-header'>📊 Desafío de una Encrucijada de Estadística Descriptiva</p>", unsafe_allow_html=True)
+    st.markdown("<p class='autor-header'>Elaborado por Natalia Salaberry</p>", unsafe_allow_html=True)
+    
+    _, center_col, _ = st.columns([1, 2, 1])
+    with center_col:
+        st.markdown("""
+        <div class="pistas-box" style="font-size: 1.15rem; line-height: 1.6; text-align: justify;">
+        Este desafío aborda los conceptos de estadística descriptiva relacionados a la construcción de 
+        información analítica sobre la cotización de un activo financiero. Los desafíos se presentan en 
+        cinco etapas, que incluyen juegos conceptuales y prácticos. <br><br>
+        Para poder superar cada etapa y escapar con éxito de la encrucijada, deberás resolver en orden 
+        consecutivo las mismas. Una vez que completes con éxito la primera etapa, selecciona en el botón 
+        inferior para pasar a la siguiente, y así sucesivamente.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.write("")
+        if st.button("COMENZAR 🚀", type="primary", use_container_width=True):
+            st.session_state.etapa = 1
+            st.rerun()
+
+
+# =====================================================================
 # ETAPA 1: EL CRUCIGRAMA
 # =====================================================================
-if st.session_state.etapa == 1:
+elif st.session_state.etapa == 1:
     st.markdown("<p class='etapa-header'>📊 Etapa 1: Crucigrama de Estadística Descriptiva</p>", unsafe_allow_html=True)
     st.markdown("<p class='autor-header'>Elaborado por Natalia Salaberry</p>", unsafe_allow_html=True)
     
@@ -115,8 +141,8 @@ if st.session_state.etapa == 1:
         aciertos = sum(1 for (r, c), letra in user_inputs.items() if letra.strip().upper() == solucion[(r, c)])
         
         if aciertos == len(solucion):
-            st.session_state.etapa = 2  # Cambiamos de etapa inmediatamente
-            st.rerun()                 # Forzamos el salto limpio a la Etapa 2
+            st.session_state.etapa = 2
+            st.rerun()
         else:
             st.error(f"Has completado {aciertos} letras correctamente de {len(solucion)}. ¡Sigue intentando!")
 
@@ -154,7 +180,7 @@ elif st.session_state.etapa == 2:
         st.markdown("""
         <div class="pistas-box">
         <h3>El reto de la dispersión</h3>
-        Si calculamos la <b>Varianza</b> de una muestra de la cotización de un activo y el resultado es <b>25</b>, 
+        Si calculamos la <b>Varianza</b> de una muestra de tiempos de carga y el resultado es <b>25</b>, 
         ¿cuál es el valor de su <b>Desviación Estándar</b>?
         </div>
         """, unsafe_allow_html=True)
@@ -166,7 +192,7 @@ elif st.session_state.etapa == 2:
                 st.session_state.etapa = 3
                 st.rerun()
             else:
-                st.error("Respuesta incorrecta. Recuerda la relación matemática entre varianza y desvío.")
+                st.error("Respuesta incorrecta. Recuerda la relación matemática entre ambas medidas.")
 
 
 # =====================================================================
@@ -180,7 +206,7 @@ elif st.session_state.etapa == 3:
         st.markdown("""
         <div class="pistas-box">
         <h3>Relación de Medidas</h3>
-        En un análisis de la cotización de un activo se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
+        En un análisis de salarios se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
         ¿Qué tipo de asimetría presenta esta distribución?
         </div>
         """, unsafe_allow_html=True)
@@ -196,25 +222,25 @@ elif st.session_state.etapa == 3:
                 st.session_state.etapa = 4
                 st.rerun()
             else:
-                st.error("Incorrecto. Piensa hacia dónde se encuentra el sesgo, es decir, la cola de la distribución.")
+                st.error("Incorrecto. Piensa hacia dónde se desplaza la media cuando hay valores muy altos.")
 
 
 # =====================================================================
 # ETAPA 4: RANGO INTERCUARTÍLICO
 # =====================================================================
 elif st.session_state.etapa == 4:
-    st.markdown("<p class='etapa-header'>📊 Etapa 4: desafío de cálculo intercuartilíco</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>📊 Etapa 4: Caja y Bigotes (RIC)</p>", unsafe_allow_html=True)
     
     _, center_col, _ = st.columns([2, 4, 2])
     with center_col:
         st.markdown("""
         <div class="pistas-box">
         <h3>Calculando con Cuartiles</h3>
-        Tienes los siguientes datos clave de una muestra de la cotización de un activo:<br>
+        Tienes los siguientes datos clave de una muestra:<br>
         • Primer Cuartil (Q1) = <b>12</b><br>
         • Mediana (Q2) = <b>18</b><br>
         • Tercer Cuartil (Q3) = <b>30</b><br><br>
-        ¿Cuál es el valor del <b>Rango Intercuartílico</b>?
+        ¿Cuál es el valor del <b>Rango Intercuartílico (RIC)</b>?
         </div>
         """, unsafe_allow_html=True)
         
@@ -225,7 +251,7 @@ elif st.session_state.etapa == 4:
                 st.session_state.etapa = 5
                 st.rerun()
             else:
-                st.error("Incorrecto. La fórmula del RIC solo requiere dos de esos datos, repasar.")
+                st.error("Incorrecto. La fórmula del RIC solo requiere dos de esos datos.")
 
 
 # =====================================================================
@@ -238,11 +264,11 @@ elif st.session_state.etapa == 5:
         st.markdown("""
         <div class="pistas-box" style="text-align: center; border-color: #10b981;">
         <h2 style="color: #10b981;">🏆 ¡Felicidades! 🏆</h2>
-        <p style="font-size: 1.2rem;">Has superado con éxito las 5 etapas de este juego.</p>
-        <b>¡Has logrado escapar con éxito de este desafío, buen trabajo!</b>
+        <p style="font-size: 1.2rem;">Has superado con éxito el crucigrama y todas las etapas conceptuales de Estadística Descriptiva.</p>
+        <b>¡Eres un experto/a manejando datos!</b>
         </div>
         """, unsafe_allow_html=True)
         
         if st.button("🔄 Volver a jugar", type="secondary", use_container_width=True):
-            st.session_state.etapa = 1
+            st.session_state.etapa = 0
             st.rerun()
