@@ -14,7 +14,7 @@ if 'etapa' not in st.session_state:
 if 'tiempo_limite' not in st.session_state:
     st.session_state.tiempo_limite = None
 
-# Mapeo de la solución del crucigrama (Coordenadas exactas de las celdas activas)
+# Mapeo de la solución del crucigrama
 solucion_crucigrama = {
     (2, 4): "E", (2, 5): "S", (2, 6): "T", (2, 7): "A", (2, 8): "D", (2, 9): "I", (2, 10): "S", (2, 11): "T", (2, 12): "I", (2, 13): "C", (2, 14): "A",
     (1, 4): "P", (3, 4): "R", (4, 4): "C", (5, 4): "E", (6, 4): "N", (7, 4): "T", (8, 4): "I", (9, 4): "L",
@@ -24,11 +24,10 @@ solucion_crucigrama = {
     (9, 6): "R", (9, 8): "C"
 }
 
-# Inicializar y asegurar las llaves del crucigrama en session_state (Previene KeyError)
+# Inicializar y asegurar las llaves del crucigrama en session_state
 if 'respuestas_crucigrama' not in st.session_state:
     st.session_state.respuestas_crucigrama = {}
 
-# Forzar que existan todas las llaves necesarias en formato string limpio ("fila_columna")
 for (r, c) in solucion_crucigrama.keys():
     clave_celda = f"{r}_{c}"
     if clave_celda not in st.session_state.respuestas_crucigrama:
@@ -85,7 +84,6 @@ st.markdown("""
         font-size: 18px;
         margin-bottom: 20px;
     }
-    /* El contador no consume maquetación principal, se ubica fijo abajo a la derecha */
     .contador-flotante {
         position: fixed;
         bottom: 20px;
@@ -114,30 +112,30 @@ st.markdown("""
 
 
 # =====================================================================
-# LÓGICA DEL CONTADOR DE TIEMPO (POSICIONAMIENTO POR CAPA CSS)
+# LÓGICA DEL CONTADOR DE TIEMPO (3 MINUTOS POR ETAPA)
 # =====================================================================
 if 0 < st.session_state.etapa < 5:
     if st.session_state.tiempo_limite is not None:
         tiempo_restante = int(st.session_state.tiempo_limite - time.time())
         
-        # El tiempo se agotó
+        # El tiempo de la ETAPA ACTUAL se agotó
         if tiempo_restante <= 0:
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
-            # Limpiar respuestas
+            # Limpiar respuestas del crucigrama para el próximo intento
             st.session_state.respuestas_crucigrama = {f"{r}_{c}": "" for (r, c) in solucion_crucigrama.keys()}
-            st.error("⏰ ¡Te quedaste sin tiempo, vuelve a intentarlo!")
-            time.sleep(3)
+            st.error("⏰ Te quedaste sin tiempo, debes volver a comenzar")
+            time.sleep(3.5)
             st.rerun()
         
         minutos = tiempo_restante // 60
         segundos = tiempo_restante % 60
         
-        # Renderizado estético del div flotante
-        clase_alerta = " contador-alerta" if tiempo_restante <= 60 else ""
+        # Alerta visual si quedan menos de 30 segundos en la etapa
+        clase_alerta = " contador-alerta" if tiempo_restante <= 30 else ""
         st.markdown(
             f'<div class="contador-flotante{clase_alerta}">'
-            f'⏳ {minutos:02d}:{segundos:02d}'
+            f'⏳ Etapa {st.session_state.etapa} — {minutos:02d}:{segundos:02d}'
             f'</div>', 
             unsafe_allow_html=True
         )
@@ -159,19 +157,20 @@ if st.session_state.etapa == 0:
         cinco etapas, que incluyen resolver actividades conceptuales y prácticas. <br><br>
         Para poder superar cada etapa y escapar con éxito de la encrucijada, deberás resolver en orden 
         consecutivo las mismas. Una vez que completes con éxito la primera etapa, selecciona en el botón 
-        inferior para pasar a la siguiente, y así sucesivamente. Cuentas con un tiempo total de 10 minutos para completar el desafío.
+        inferior para pasar a la siguiente, y así sucesivamente. **Cuentas con un tiempo máximo de 3 minutos por cada etapa.**
         </div>
         """, unsafe_allow_html=True)
         
         st.write("")
         if st.button("COMENZAR 🚀", type="primary", use_container_width=True):
-            st.session_state.tiempo_limite = time.time() + (10 * 60)
+            # Asigna los primeros 3 minutos (3 * 60 segundos)
+            st.session_state.tiempo_limite = time.time() + (3 * 60)
             st.session_state.etapa = 1
             st.rerun()
 
 
 # =====================================================================
-# ETAPA 1: EL CRUCIGRAMA (FIX DE PERSISTENCIA Y KEYERROR)
+# ETAPA 1: EL CRUCIGRAMA
 # =====================================================================
 elif st.session_state.etapa == 1:
     st.markdown("<p class='etapa-header'>📊 Etapa 1: Resolver el Crucigrama</p>", unsafe_allow_html=True)
@@ -186,7 +185,6 @@ elif st.session_state.etapa == 1:
                 with cols[c]:
                     clave_celda = f"{r}_{c}"
                     if (r, c) in solucion_crucigrama:
-                        # Asignación segura vinculando el value directamente al session_state
                         st.session_state.respuestas_crucigrama[clave_celda] = st.text_input(
                             label=f"input_{r}_{c}",
                             value=st.session_state.respuestas_crucigrama[clave_celda],
@@ -210,6 +208,8 @@ elif st.session_state.etapa == 1:
                 aciertos += 1
         
         if aciertos == len(solucion_crucigrama):
+            # Reiniciar reloj a 3 minutos para la etapa 2
+            st.session_state.tiempo_limite = time.time() + (3 * 60)
             st.session_state.etapa = 2
             st.rerun()
         else:
@@ -258,6 +258,8 @@ elif st.session_state.etapa == 2:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_2 == 5:
+                # Reiniciar reloj a 3 minutos para la etapa 3
+                st.session_state.tiempo_limite = time.time() + (3 * 60)
                 st.session_state.etapa = 3
                 st.rerun()
             else:
@@ -296,6 +298,8 @@ elif st.session_state.etapa == 3:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if opcion_3 == "Asimetría Positiva (A la derecha)":
+                # Reiniciar reloj a 3 minutos para la etapa 4
+                st.session_state.tiempo_limite = time.time() + (3 * 60)
                 st.session_state.etapa = 4
                 st.rerun()
             else:
@@ -321,7 +325,6 @@ elif st.session_state.etapa == 4:
         </div>
         """, unsafe_allow_html=True)
         
-        # --- BOXPLOT HORIZONTAL INTEGRADO CON VEGA-LITE (NATIVO) ---
         st.write("**Diagrama de Caja (Boxplot) de las cotizaciones con las medidas indicadas:**")
         
         datos_box = pd.DataFrame({
@@ -353,7 +356,6 @@ elif st.session_state.etapa == 4:
                 }
             ]
         })
-        # -----------------------------------------------------------
         
         respuesta_4 = st.number_input("Ingresa tu respuesta numérica:", value=0, step=1, key="input_e4")
         
