@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go  # Nueva librería para el Boxplot interactivo
 
 # =====================================================================
 # 1. CONFIGURACIÓN DE LA PÁGINA Y ESTILOS
@@ -253,36 +252,42 @@ elif st.session_state.etapa == 4:
         </div>
         """, unsafe_allow_html=True)
         
-        # --- NUEVO: Construcción del Boxplot Horizontal con Plotly ---
-        st.write("**Diagrama de Caja (Boxplot) de las cotizaciones:**")
+        # --- BOXPLOT HORIZONTAL INTEGRADO CON VEGA-LITE (NATIVO) ---
+        st.write("**Diagrama de Caja (Boxplot) de las cotizaciones con las medidas indicadas:**")
         
-        fig = go.Figure()
-        fig.add_trace(go.Box(
-            x=[5, 12, 14, 18, 22, 30, 45],  # Muestra representativa acorde a los cuartiles dados
-            name="Cotización",
-            orientation='h',
-            marker_color='#1e3a8a',
-            line_width=2,
-            boxmean=False
-        ))
+        # Estructuramos un DataFrame de muestra cuyos valores den exactamente los cuartiles del enunciado
+        datos_box = pd.DataFrame({
+            "Precio ($)": [5, 12, 14, 18, 22, 30, 45]
+        })
         
-        # Agregar etiquetas de texto estáticas sobre el gráfico para marcar las medidas
-        fig.update_layout(
-            annotations=[
-                dict(x=12, y=0.15, text="<b>Q1 = 12</b>", showarrow=False, font=dict(color="#1e3a8a", size=12)),
-                dict(x=18, y=0.25, text="<b>Mediana = 18</b>", showarrow=False, font=dict(color="#b91c1c", size=12)),
-                dict(x=30, y=0.15, text="<b>Q3 = 30</b>", showarrow=False, font=dict(color="#1e3a8a", size=12))
-            ],
-            xaxis=dict(title="Precio del Activo ($)", range=[0, 50], gridcolor='rgba(0,0,0,0.05)'),
-            yaxis=dict(showticklabels=False),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            height=200,
-            margin=dict(l=20, r=20, t=20, b=40)
-        )
-        
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-        # -------------------------------------------------------------
+        # Renderizamos el gráfico usando la especificación declarativa nativa de Streamlit
+        st.vega_lite_chart(datos_box, {
+            "width": "container",
+            "height": 180,
+            "config": {
+                "view": {"stroke": "transparent"}
+            },
+            "layer": [
+                {
+                    # Capa principal: El Diagrama de Caja Horizontal
+                    "mark": {
+                        "type": "boxplot", 
+                        "extent": "min-max", 
+                        "color": "#1e3a8a",
+                        "median": {"color": "#b91c1c", "thickness": 3}
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "Precio ($)", 
+                            "type": "quantitative", 
+                            "scale": {"domain": [0, 50]},
+                            "title": "Precio del Activo ($)"
+                        }
+                    }
+                }
+            ]
+        })
+        # -----------------------------------------------------------
         
         respuesta_4 = st.number_input("Ingresa tu respuesta numérica:", value=0, step=1, key="input_e4")
         
