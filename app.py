@@ -401,7 +401,7 @@ elif st.session_state.etapa == 5:
                 st.session_state.etapa = 6
                 st.rerun()
             else:
-                st.error("Incorrecto. Observa la altura de la curva en al parte central.")
+                st.error("Incorrecto. Observa la altura de la curva en la parte central.")
 
 
 # =====================================================================
