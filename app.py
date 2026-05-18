@@ -1,14 +1,18 @@
 import streamlit as st
 import pandas as pd
+import time  
 
 # =====================================================================
 # 1. CONFIGURACIÓN DE LA PÁGINA Y ESTILOS
 # =====================================================================
 st.set_page_config(page_title="Juego de Etapas: Estadística", layout="wide")
 
-# Inicialización del estado del juego (Etapa 0: Presentación)
+# Inicialización del estado del juego
 if 'etapa' not in st.session_state:
     st.session_state.etapa = 0
+
+if 'tiempo_limite' not in st.session_state:
+    st.session_state.tiempo_limite = None
 
 # Estilos CSS originales
 st.markdown("""
@@ -66,6 +70,41 @@ st.markdown("""
 
 
 # =====================================================================
+# LÓGICA DEL CONTADOR DE TIEMPO (GLOBAL)
+# =====================================================================
+# Solo calcula el tiempo si el juego ya comenzó (etapa > 0) y no ha terminado (etapa < 5)
+if 0 < st.session_state.etapa < 5:
+    if st.session_state.tiempo_limite is not None:
+        tiempo_restante = int(st.session_state.tiempo_limite - time.time())
+        
+        # Verificación de Game Over por tiempo expirado
+        if tiempo_restante <= 0:
+            st.session_state.etapa = 0
+            st.session_state.tiempo_limite = None
+            st.error("⏰ ¡Te quedaste sin tiempo, vuelve a intentarlo!")
+            time.sleep(3)  # Pausa breve para que el usuario logre leer el mensaje antes del refresh
+            st.rerun()
+        
+        # Conversión del tiempo restante a formato MM:SS
+        minutos = tiempo_restante // 60
+        segundos = tiempo_restante % 60
+        
+        # Renderizado estético del cronómetro en la barra lateral (Sidebar)
+        with st.sidebar:
+            st.markdown("### ⏳ Tiempo Restante")
+            if tiempo_restante > 60:
+                st.metric(label="Minutos : Segundos", value=f"{minutos:02d}:{segundos:02d}")
+            else:
+                # Alerta visual en rojo si queda menos de un minuto
+                st.markdown(f"<h2 style='color: #b91c1c; text-align: center;'>{minutos:02d}:{segundos:02d}</h2>", unsafe_allow_html=True)
+                st.warning("⚠️ ¡Te queda menos de un minuto!")
+            
+            # Línea divisoria y recordatorio del objetivo
+            st.write("---")
+            st.caption("Resuelve todas las etapas consecutivamente antes de que el contador llegue a cero.")
+
+
+# =====================================================================
 # ETAPA 0: PRESENTACIÓN DEL JUEGO
 # =====================================================================
 if st.session_state.etapa == 0:
@@ -87,6 +126,8 @@ if st.session_state.etapa == 0:
         
         st.write("")
         if st.button("COMENZAR 🚀", type="primary", use_container_width=True):
+            # Seteamos el límite de 10 minutos (10 minutos * 60 segundos) desde este instante preciso
+            st.session_state.tiempo_limite = time.time() + (10 * 60)
             st.session_state.etapa = 1
             st.rerun()
 
@@ -255,12 +296,10 @@ elif st.session_state.etapa == 4:
         # --- BOXPLOT HORIZONTAL INTEGRADO CON VEGA-LITE (NATIVO) ---
         st.write("**Diagrama de Caja (Boxplot) de las cotizaciones con las medidas indicadas:**")
         
-        # Estructuramos un DataFrame de muestra cuyos valores den exactamente los cuartiles del enunciado
         datos_box = pd.DataFrame({
             "Precio ($)": [5, 12, 14, 18, 22, 30, 45]
         })
         
-        # Renderizamos el gráfico usando la especificación declarativa nativa de Streamlit
         st.vega_lite_chart(datos_box, {
             "width": "container",
             "height": 180,
@@ -269,7 +308,6 @@ elif st.session_state.etapa == 4:
             },
             "layer": [
                 {
-                    # Capa principal: El Diagrama de Caja Horizontal
                     "mark": {
                         "type": "boxplot", 
                         "extent": "min-max", 
@@ -316,4 +354,5 @@ elif st.session_state.etapa == 5:
         
         if st.button("🔄 Volver a jugar", type="secondary", use_container_width=True):
             st.session_state.etapa = 0
+            st.session_state.tiempo_limite = None
             st.rerun()
