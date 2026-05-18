@@ -1,5 +1,7 @@
+import streamlit as pd
 import streamlit as st
 import pandas as pd
+import numpy as np
 import time
 
 # =====================================================================
@@ -114,15 +116,13 @@ st.markdown("""
 # =====================================================================
 # LÓGICA DEL CONTADOR DE TIEMPO (3 MINUTOS POR ETAPA)
 # =====================================================================
-if 0 < st.session_state.etapa < 5:
+if 0 < st.session_state.etapa < 6:
     if st.session_state.tiempo_limite is not None:
         tiempo_restante = int(st.session_state.tiempo_limite - time.time())
         
-        # El tiempo de la ETAPA ACTUAL se agotó
         if tiempo_restante <= 0:
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
-            # Limpiar respuestas del crucigrama para el próximo intento
             st.session_state.respuestas_crucigrama = {f"{r}_{c}": "" for (r, c) in solucion_crucigrama.keys()}
             st.error("⏰ Te quedaste sin tiempo, debes volver a comenzar")
             time.sleep(3.5)
@@ -131,7 +131,6 @@ if 0 < st.session_state.etapa < 5:
         minutos = tiempo_restante // 60
         segundos = tiempo_restante % 60
         
-        # Alerta visual si quedan menos de 30 segundos en la etapa
         clase_alerta = " contador-alerta" if tiempo_restante <= 30 else ""
         st.markdown(
             f'<div class="contador-flotante{clase_alerta}">'
@@ -154,16 +153,15 @@ if st.session_state.etapa == 0:
         <div class="pistas-box" style="font-size: 1.15rem; line-height: 1.6; text-align: justify;">
         Este desafío aborda los conceptos de estadística descriptiva relacionados a la construcción de 
         información analítica descriptiva sobre la cotización de un activo financiero. Los desafíos se presentan en 
-        cinco etapas, que incluyen resolver actividades conceptuales y prácticas. <br><br>
+        seis etapas, que incluyen resolver actividades conceptuales y prácticas. <br><br>
         Para poder superar cada etapa y escapar con éxito de la encrucijada, deberás resolver en orden 
-        consecutivo las mismas. Una vez que completes con éxito la primera etapa, selecciona en el botón 
-        inferior para pasar a la siguiente, y así sucesivamente. **Cuentas con un tiempo máximo de 3 minutos por cada etapa.**
+        consecutivo las mismas. Una vez que completes con éxito una etapa, selecciona en el botón 
+        inferior para pasar a la siguiente. **Cuentas con un tiempo máximo de 3 minutos por cada etapa.**
         </div>
         """, unsafe_allow_html=True)
         
         st.write("")
         if st.button("COMENZAR 🚀", type="primary", use_container_width=True):
-            # Asigna los primeros 3 minutos (3 * 60 segundos)
             st.session_state.tiempo_limite = time.time() + (3 * 60)
             st.session_state.etapa = 1
             st.rerun()
@@ -208,7 +206,6 @@ elif st.session_state.etapa == 1:
                 aciertos += 1
         
         if aciertos == len(solucion_crucigrama):
-            # Reiniciar reloj a 3 minutos para la etapa 2
             st.session_state.tiempo_limite = time.time() + (3 * 60)
             st.session_state.etapa = 2
             st.rerun()
@@ -258,7 +255,6 @@ elif st.session_state.etapa == 2:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_2 == 5:
-                # Reiniciar reloj a 3 minutos para la etapa 3
                 st.session_state.tiempo_limite = time.time() + (3 * 60)
                 st.session_state.etapa = 3
                 st.rerun()
@@ -298,7 +294,6 @@ elif st.session_state.etapa == 3:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if opcion_3 == "Asimetría Positiva (A la derecha)":
-                # Reiniciar reloj a 3 minutos para la etapa 4
                 st.session_state.tiempo_limite = time.time() + (3 * 60)
                 st.session_state.etapa = 4
                 st.rerun()
@@ -361,6 +356,7 @@ elif st.session_state.etapa == 4:
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_4 == 18:
+                st.session_state.tiempo_limite = time.time() + (3 * 60)
                 st.session_state.etapa = 5
                 st.rerun()
             else:
@@ -368,9 +364,51 @@ elif st.session_state.etapa == 4:
 
 
 # =====================================================================
-# ETAPA 5: PANTALLA FINAL DE ÉXITO
+# ETAPA 5: CURTOSIS (NUEVA ETAPA)
 # =====================================================================
 elif st.session_state.etapa == 5:
+    st.markdown("<p class='etapa-header'>📉 Etapa 5: Análisis de Curtosis</p>", unsafe_allow_html=True)
+    
+    _, center_col, _ = st.columns([2, 4, 2])
+    with center_col:
+        st.markdown("""
+        <div class="pistas-box">
+        <h3>Grado de Concentración</h3>
+        Dada la distribución de la cotización de un activo como la que se muestra a continuación, 
+        ¿cómo es la <b>curtosis</b> de la distribución?
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Generar una distribución platicúrtica artificial (Campana achatada) utilizando una función coseno suavizada
+        x = np.linspace(-4, 4, 100)
+        # Una aproximación visual a una curva platicúrtica uniforme y de baja altura
+        y = np.where(np.abs(x) <= 3, 0.15 * (1 + np.cos(np.pi * x / 3)), 0) + 0.01
+        
+        df_curtosis = pd.DataFrame({
+            "Precio del Activo": x,
+            "Densidad de Frecuencia": y
+        }).set_index("Precio del Activo")
+        
+        st.line_chart(df_curtosis, color="#1e3a8a")
+        
+        opcion_5 = st.radio(
+            "Selecciona la opción correcta:",
+            ["A - Leptocúrtica", "B - Platicúrtica", "C - Mesocúrtica"],
+            key="radio_e5"
+        )
+        
+        if st.button("Validar Respuesta", type="primary", use_container_width=True):
+            if opcion_5 == "B - Platicúrtica":
+                st.session_state.etapa = 6
+                st.rerun()
+            else:
+                st.error("Incorrecto. Observa el achatamiento de la curva y el grosor moderado de sus colas.")
+
+
+# =====================================================================
+# ETAPA 6: PANTALLA FINAL DE ÉXITO
+# =====================================================================
+elif st.session_state.etapa == 6:
     st.balloons()
     _, center_col, _ = st.columns([2, 4, 2])
     with center_col:
