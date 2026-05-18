@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go  # Nueva librería para el Boxplot interactivo
 
 # =====================================================================
 # 1. CONFIGURACIÓN DE LA PÁGINA Y ESTILOS
@@ -68,7 +70,7 @@ st.markdown("""
 # ETAPA 0: PRESENTACIÓN DEL JUEGO
 # =====================================================================
 if st.session_state.etapa == 0:
-    st.markdown("<p class='etapa-header'>📊 Desafío de una Encrucijada de Estadística Descriptiva</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>📊 Desafío: Encrucijada de Estadística Descriptiva</p>", unsafe_allow_html=True)
     st.markdown("<p class='autor-header'>Elaborado por Natalia Salaberry</p>", unsafe_allow_html=True)
     
     _, center_col, _ = st.columns([1, 2, 1])
@@ -76,11 +78,11 @@ if st.session_state.etapa == 0:
         st.markdown("""
         <div class="pistas-box" style="font-size: 1.15rem; line-height: 1.6; text-align: justify;">
         Este desafío aborda los conceptos de estadística descriptiva relacionados a la construcción de 
-        información analítica sobre la cotización de un activo financiero. Los desafíos se presentan en 
-        cinco etapas, que incluyen juegos conceptuales y prácticos. <br><br>
+        información analítica descriptiva sobre la cotización de un activo financiero. Los desafíos se presentan en 
+        cinco etapas, que incluyen resolver actividades conceptuales y prácticas. <br><br>
         Para poder superar cada etapa y escapar con éxito de la encrucijada, deberás resolver en orden 
         consecutivo las mismas. Una vez que completes con éxito la primera etapa, selecciona en el botón 
-        inferior para pasar a la siguiente, y así sucesivamente.
+        inferior para pasar a la siguiente, y así sucesivamente. Cuentas con un tiempo total de 10 minutos para completar el desafío.
         </div>
         """, unsafe_allow_html=True)
         
@@ -94,8 +96,7 @@ if st.session_state.etapa == 0:
 # ETAPA 1: EL CRUCIGRAMA
 # =====================================================================
 elif st.session_state.etapa == 1:
-    st.markdown("<p class='etapa-header'>📊 Etapa 1: Crucigrama de Estadística Descriptiva</p>", unsafe_allow_html=True)
-    st.markdown("<p class='autor-header'>Elaborado por Natalia Salaberry</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>📊 Etapa 1: Resolver el Crucigrama</p>", unsafe_allow_html=True)
     
     solucion = {}
     p1 = "ESTADISTICA"
@@ -173,15 +174,15 @@ elif st.session_state.etapa == 1:
 # ETAPA 2: CÁLCULO DE DISPERSIÓN
 # =====================================================================
 elif st.session_state.etapa == 2:
-    st.markdown("<p class='etapa-header'>🔢 Etapa 2: Varianza y Desviación</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>🔢 Etapa 2: Calcular el desvío</p>", unsafe_allow_html=True)
     
     _, center_col, _ = st.columns([2, 4, 2])
     with center_col:
         st.markdown("""
         <div class="pistas-box">
         <h3>El reto de la dispersión</h3>
-        Si calculamos la <b>Varianza</b> de una muestra de tiempos de carga y el resultado es <b>25</b>, 
-        ¿cuál es el valor de su <b>Desviación Estándar</b>?
+        Si calculamos la <b>Varianza</b> de una muestra de la cotización de un activo y el resultado es <b>25</b>, 
+        ¿cuál es el valor de su <b>Desvío muestral</b>?
         </div>
         """, unsafe_allow_html=True)
         
@@ -192,7 +193,7 @@ elif st.session_state.etapa == 2:
                 st.session_state.etapa = 3
                 st.rerun()
             else:
-                st.error("Respuesta incorrecta. Recuerda la relación matemática entre ambas medidas.")
+                st.error("Respuesta incorrecta. Revisá la relación matemática entre ambas medidas.")
 
 
 # =====================================================================
@@ -206,11 +207,19 @@ elif st.session_state.etapa == 3:
         st.markdown("""
         <div class="pistas-box">
         <h3>Relación de Medidas</h3>
-        En un análisis de salarios se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
+        En un análisis de una muestra de la cotización de un activo se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
         ¿Qué tipo de asimetría presenta esta distribución?
         </div>
         """, unsafe_allow_html=True)
         
+        st.write("**Representación gráfica de las cotizaciones analizadas:**")
+        
+        datos_histograma = pd.DataFrame({
+            "Frecuencia (Días)": [45, 38, 25, 14, 8, 4, 2, 1]
+        }, index=["$10-$20", "$20-$30", "$30-$40", "$40-$50", "$50-$60", "$60-$70", "$70-$80", "$80-$90"])
+        
+        st.bar_chart(datos_histograma, color="#1e3a8a")
+
         opcion_3 = st.radio(
             "Selecciona la opción correcta:",
             ["Asimetría Negativa (A la izquierda)", "Distribución Simétrica", "Asimetría Positiva (A la derecha)"],
@@ -222,27 +231,58 @@ elif st.session_state.etapa == 3:
                 st.session_state.etapa = 4
                 st.rerun()
             else:
-                st.error("Incorrecto. Piensa hacia dónde se desplaza la media cuando hay valores muy altos.")
+                st.error("Incorrecto. Piensa hacia dónde se encuentra el sesgo, es decir, la cola de la distribución.")
 
 
 # =====================================================================
 # ETAPA 4: RANGO INTERCUARTÍLICO
 # =====================================================================
 elif st.session_state.etapa == 4:
-    st.markdown("<p class='etapa-header'>📊 Etapa 4: Caja y Bigotes (RIC)</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>📊 Etapa 4: Calcular el Rango Intercuartílico</p>", unsafe_allow_html=True)
     
     _, center_col, _ = st.columns([2, 4, 2])
     with center_col:
         st.markdown("""
         <div class="pistas-box">
         <h3>Calculando con Cuartiles</h3>
-        Tienes los siguientes datos clave de una muestra:<br>
+        Tienes las siguientes medidas calculadas sobre una muestra de la cotización de un activo:<br>
         • Primer Cuartil (Q1) = <b>12</b><br>
         • Mediana (Q2) = <b>18</b><br>
         • Tercer Cuartil (Q3) = <b>30</b><br><br>
         ¿Cuál es el valor del <b>Rango Intercuartílico (RIC)</b>?
         </div>
         """, unsafe_allow_html=True)
+        
+        # --- NUEVO: Construcción del Boxplot Horizontal con Plotly ---
+        st.write("**Diagrama de Caja (Boxplot) de las cotizaciones:**")
+        
+        fig = go.Figure()
+        fig.add_trace(go.Box(
+            x=[5, 12, 14, 18, 22, 30, 45],  # Muestra representativa acorde a los cuartiles dados
+            name="Cotización",
+            orientation='h',
+            marker_color='#1e3a8a',
+            line_width=2,
+            boxmean=False
+        ))
+        
+        # Agregar etiquetas de texto estáticas sobre el gráfico para marcar las medidas
+        fig.update_layout(
+            annotations=[
+                dict(x=12, y=0.15, text="<b>Q1 = 12</b>", showarrow=False, font=dict(color="#1e3a8a", size=12)),
+                dict(x=18, y=0.25, text="<b>Mediana = 18</b>", showarrow=False, font=dict(color="#b91c1c", size=12)),
+                dict(x=30, y=0.15, text="<b>Q3 = 30</b>", showarrow=False, font=dict(color="#1e3a8a", size=12))
+            ],
+            xaxis=dict(title="Precio del Activo ($)", range=[0, 50], gridcolor='rgba(0,0,0,0.05)'),
+            yaxis=dict(showticklabels=False),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            height=200,
+            margin=dict(l=20, r=20, t=20, b=40)
+        )
+        
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        # -------------------------------------------------------------
         
         respuesta_4 = st.number_input("Ingresa tu respuesta numérica:", value=0, step=1, key="input_e4")
         
@@ -251,7 +291,7 @@ elif st.session_state.etapa == 4:
                 st.session_state.etapa = 5
                 st.rerun()
             else:
-                st.error("Incorrecto. La fórmula del RIC solo requiere dos de esos datos.")
+                st.error("Incorrecto. Revisá la fórmula del RIC.")
 
 
 # =====================================================================
@@ -264,8 +304,8 @@ elif st.session_state.etapa == 5:
         st.markdown("""
         <div class="pistas-box" style="text-align: center; border-color: #10b981;">
         <h2 style="color: #10b981;">🏆 ¡Felicidades! 🏆</h2>
-        <p style="font-size: 1.2rem;">Has superado con éxito el crucigrama y todas las etapas conceptuales de Estadística Descriptiva.</p>
-        <b>¡Eres un experto/a manejando datos!</b>
+        <p style="font-size: 1.2rem;">Has superado con éxito todas las etapas.</p>
+        <b>¡Has superado exitosamente el desafío!</b>
         </div>
         """, unsafe_allow_html=True)
         
