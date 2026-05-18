@@ -26,7 +26,6 @@ solucion_crucigrama = {
     (9, 6): "R", (9, 8): "C"
 }
 
-# Inicializar y asegurar las llaves del crucigrama en session_state
 if 'respuestas_crucigrama' not in st.session_state:
     st.session_state.respuestas_crucigrama = {}
 
@@ -35,7 +34,6 @@ for (r, c) in solucion_crucigrama.keys():
     if clave_celda not in st.session_state.respuestas_crucigrama:
         st.session_state.respuestas_crucigrama[clave_celda] = ""
 
-# Estilos CSS (Incluye el contador flotante abajo a la derecha)
 st.markdown("""
     <style>
     .stApp {
@@ -251,7 +249,7 @@ elif st.session_state.etapa == 2:
         </div>
         """, unsafe_allow_html=True)
         
-        respuesta_2 = st.number_input("Ingresa tu respuesta numérica:", value=0, step=1, key="input_e2")
+        respuesta_2 = st.number_input("Ingrese su respuesta numérica:", value=0, step=1, key="input_e2")
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_2 == 5:
@@ -259,7 +257,7 @@ elif st.session_state.etapa == 2:
                 st.session_state.etapa = 3
                 st.rerun()
             else:
-                st.error("Respuesta incorrecta. Revisá la relación matemática entre ambas medidas.")
+                st.error("Respuesta incorrecta. Revise la relación matemática entre ambas medidas.")
 
 
 # =====================================================================
@@ -278,7 +276,7 @@ elif st.session_state.etapa == 3:
         </div>
         """, unsafe_allow_html=True)
         
-        st.write("**Representación gráfica de las cotizaciones analizadas:**")
+        st.write("**Representación gráfica de la distribución de cotizaciones:**")
         
         datos_histograma = pd.DataFrame({
             "Frecuencia (Días)": [45, 38, 25, 14, 8, 4, 2, 1]
@@ -287,7 +285,7 @@ elif st.session_state.etapa == 3:
         st.bar_chart(datos_histograma, color="#1e3a8a")
 
         opcion_3 = st.radio(
-            "Selecciona la opción correcta:",
+            "Seleccione la opción correcta:",
             ["Asimetría Negativa (A la izquierda)", "Distribución Simétrica", "Asimetría Positiva (A la derecha)"],
             key="radio_e3"
         )
@@ -298,7 +296,7 @@ elif st.session_state.etapa == 3:
                 st.session_state.etapa = 4
                 st.rerun()
             else:
-                st.error("Incorrecto. Piensa hacia dónde se encuentra el sesgo, es decir, la cola de la distribución.")
+                st.error("Incorrecto. Piense hacia dónde se encuentra el sesgo, es decir, la cola de la distribución.")
 
 
 # =====================================================================
@@ -314,7 +312,7 @@ elif st.session_state.etapa == 4:
         <h3>Calculando con Cuartiles</h3>
         Tienes las siguientes medidas calculadas sobre una muestra de la cotización de un activo:<br>
         • Primer Cuartil (Q1) = <b>12</b><br>
-        • Mediana (Q2) = <b>18</b><br>
+        • Mediana (Q2) = <b>15</b><br>
         • Tercer Cuartil (Q3) = <b>30</b><br><br>
         ¿Cuál es el valor del <b>Rango Intercuartílico (RIC)</b>?
         </div>
@@ -352,7 +350,7 @@ elif st.session_state.etapa == 4:
             ]
         })
         
-        respuesta_4 = st.number_input("Ingresa tu respuesta numérica:", value=0, step=1, key="input_e4")
+        respuesta_4 = st.number_input("Ingrese su respuesta numérica:", value=0, step=1, key="input_e4")
         
         if st.button("Validar Respuesta", type="primary", use_container_width=True):
             if respuesta_4 == 18:
@@ -360,7 +358,7 @@ elif st.session_state.etapa == 4:
                 st.session_state.etapa = 5
                 st.rerun()
             else:
-                st.error("Incorrecto. Revisá la fórmula de cálculo del RIC.")
+                st.error("Incorrecto. Revise la fórmula de cálculo del RIC.")
 
 
 # =====================================================================
@@ -378,8 +376,7 @@ elif st.session_state.etapa == 5:
         ¿cómo es la <b>curtosis</b> de la distribución?
         </div>
         """, unsafe_allow_html=True)
-        
-        # Gráfico de una distribución platicúrtica 
+         
         x = np.linspace(-4, 4, 100)
         y = np.where(np.abs(x) <= 3, 0.15 * (1 + np.cos(np.pi * x / 3)), 0) + 0.01
         
@@ -391,7 +388,7 @@ elif st.session_state.etapa == 5:
         st.line_chart(df_curtosis, color="#1e3a8a")
         
         opcion_5 = st.radio(
-            "Selecciona la opción correcta:",
+            "Seleccione la opción correcta:",
             ["A - Leptocúrtica", "B - Platicúrtica", "C - Mesocúrtica"],
             key="radio_e5"
         )
@@ -401,7 +398,7 @@ elif st.session_state.etapa == 5:
                 st.session_state.etapa = 6
                 st.rerun()
             else:
-                st.error("Incorrecto. Observa la altura de la curva en la parte central.")
+                st.error("Incorrecto. Observe la altura de la curva en la parte central.")
 
 
 # =====================================================================
