@@ -154,7 +154,7 @@ elif st.session_state.etapa == 2:
         st.markdown("""
         <div class="pistas-box">
         <h3>El reto de la dispersión</h3>
-        Si calculamos la <b>Varianza</b> de una muestra de tiempos de carga y el resultado es <b>25</b>, 
+        Si calculamos la <b>Varianza</b> de una muestra de la cotización de un activo y el resultado es <b>25</b>, 
         ¿cuál es el valor de su <b>Desviación Estándar</b>?
         </div>
         """, unsafe_allow_html=True)
@@ -166,7 +166,7 @@ elif st.session_state.etapa == 2:
                 st.session_state.etapa = 3
                 st.rerun()
             else:
-                st.error("Respuesta incorrecta. Recuerda la relación matemática entre ambas medidas.")
+                st.error("Respuesta incorrecta. Recuerda la relación matemática entre varianza y desvío.")
 
 
 # =====================================================================
@@ -180,7 +180,7 @@ elif st.session_state.etapa == 3:
         st.markdown("""
         <div class="pistas-box">
         <h3>Relación de Medidas</h3>
-        En un análisis de salarios se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
+        En un análisis de la cotización de un activo se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
         ¿Qué tipo de asimetría presenta esta distribución?
         </div>
         """, unsafe_allow_html=True)
@@ -196,25 +196,25 @@ elif st.session_state.etapa == 3:
                 st.session_state.etapa = 4
                 st.rerun()
             else:
-                st.error("Incorrecto. Piensa hacia dónde se desplaza la media cuando hay valores muy altos.")
+                st.error("Incorrecto. Piensa hacia dónde se encuentra el sesgo, es decir, la cola de la distribución.")
 
 
 # =====================================================================
 # ETAPA 4: RANGO INTERCUARTÍLICO
 # =====================================================================
 elif st.session_state.etapa == 4:
-    st.markdown("<p class='etapa-header'>📊 Etapa 4: Caja y Bigotes (RIC)</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>📊 Etapa 4: desafío de cálculo intercuartilíco</p>", unsafe_allow_html=True)
     
     _, center_col, _ = st.columns([2, 4, 2])
     with center_col:
         st.markdown("""
         <div class="pistas-box">
         <h3>Calculando con Cuartiles</h3>
-        Tienes los siguientes datos clave de una muestra:<br>
+        Tienes los siguientes datos clave de una muestra de la cotización de un activo:<br>
         • Primer Cuartil (Q1) = <b>12</b><br>
         • Mediana (Q2) = <b>18</b><br>
         • Tercer Cuartil (Q3) = <b>30</b><br><br>
-        ¿Cuál es el valor del <b>Rango Intercuartílico (RIC)</b>?
+        ¿Cuál es el valor del <b>Rango Intercuartílico</b>?
         </div>
         """, unsafe_allow_html=True)
         
@@ -225,7 +225,7 @@ elif st.session_state.etapa == 4:
                 st.session_state.etapa = 5
                 st.rerun()
             else:
-                st.error("Incorrecto. La fórmula del RIC solo requiere dos de esos datos.")
+                st.error("Incorrecto. La fórmula del RIC solo requiere dos de esos datos, repasar.")
 
 
 # =====================================================================
@@ -238,8 +238,8 @@ elif st.session_state.etapa == 5:
         st.markdown("""
         <div class="pistas-box" style="text-align: center; border-color: #10b981;">
         <h2 style="color: #10b981;">🏆 ¡Felicidades! 🏆</h2>
-        <p style="font-size: 1.2rem;">Has superado con éxito el crucigrama y todas las etapas conceptuales de Estadística Descriptiva.</p>
-        <b>¡Eres un experto/a manejando datos!</b>
+        <p style="font-size: 1.2rem;">Has superado con éxito las 5 etapas de este juego.</p>
+        <b>¡Has logrado escapar con éxito de este desafío, buen trabajo!</b>
         </div>
         """, unsafe_allow_html=True)
         
