@@ -266,14 +266,14 @@ elif st.session_state.etapa == 2:
 # ETAPA 3: INTERPRETACIÓN DE GRÁFICOS / ASIMETRÍA
 # =====================================================================
 elif st.session_state.etapa == 3:
-    st.markdown("<p class='etapa-header'>📈 Etapa 3: Análisis de Formas</p>", unsafe_allow_html=True)
+    st.markdown("<p class='etapa-header'>📈 Etapa 3: Análisis de Asimetría</p>", unsafe_allow_html=True)
     
     _, center_col, _ = st.columns([2, 4, 2])
     with center_col:
         st.markdown("""
         <div class="pistas-box">
         <h3>Relación de Medidas</h3>
-        En un análisis de una muestra de la cotización de un activo se observa que la <b>Media</b> es notablemente <b>mayor</b> que la <b>Mediana</b> (Media > Mediana). 
+        En un análisis de una muestra de la cotización de un activo se observa el siguiente histograma: 
         ¿Qué tipo de asimetría presenta esta distribución?
         </div>
         """, unsafe_allow_html=True)
@@ -320,7 +320,7 @@ elif st.session_state.etapa == 4:
         </div>
         """, unsafe_allow_html=True)
         
-        st.write("**Diagrama de Caja (Boxplot) de las cotizaciones con las medidas indicadas:**")
+        st.write("**Boxplot de las cotizaciones con las medidas indicadas:**")
         
         datos_box = pd.DataFrame({
             "Precio ($)": [5, 12, 14, 18, 22, 30, 45]
@@ -360,11 +360,11 @@ elif st.session_state.etapa == 4:
                 st.session_state.etapa = 5
                 st.rerun()
             else:
-                st.error("Incorrecto. Revisá la fórmula del RIC.")
+                st.error("Incorrecto. Revisá la fórmula de cálculo del RIC.")
 
 
 # =====================================================================
-# ETAPA 5: CURTOSIS (NUEVA ETAPA)
+# ETAPA 5: CURTOSIS 
 # =====================================================================
 elif st.session_state.etapa == 5:
     st.markdown("<p class='etapa-header'>📉 Etapa 5: Análisis de Curtosis</p>", unsafe_allow_html=True)
@@ -379,10 +379,9 @@ elif st.session_state.etapa == 5:
         </div>
         """, unsafe_allow_html=True)
         
-        # Generar una distribución platicúrtica artificial (Campana achatada) utilizando una función coseno suavizada
+        # Gráfico de una distribución platicúrtica 
         x = np.linspace(-4, 4, 100)
-        # Una aproximación visual a una curva platicúrtica uniforme y de baja altura
-        y = np.where(np.abs(x) <= 3, 0.15 * (1 + np.cos(np.pi * x / 3)), 0) + 0.01
+        y = np.where(np.abs(x) <= 3, 0.15 * (1 + np.cos(np.pi * x / 3)), 0) + 0.2
         
         df_curtosis = pd.DataFrame({
             "Precio del Activo": x,
@@ -402,7 +401,7 @@ elif st.session_state.etapa == 5:
                 st.session_state.etapa = 6
                 st.rerun()
             else:
-                st.error("Incorrecto. Observa el achatamiento de la curva y el grosor moderado de sus colas.")
+                st.error("Incorrecto. Observa la altura de la curva en al parte central.")
 
 
 # =====================================================================
@@ -416,7 +415,7 @@ elif st.session_state.etapa == 6:
         <div class="pistas-box" style="text-align: center; border-color: #10b981;">
         <h2 style="color: #10b981;">🏆 ¡Felicidades! 🏆</h2>
         <p style="font-size: 1.2rem;">Has superado con éxito todas las etapas.</p>
-        <b>¡Has superado exitosamente el desafío!</b>
+        <b>¡El desafío se encuentra resuelto!</b>
         </div>
         """, unsafe_allow_html=True)
         
