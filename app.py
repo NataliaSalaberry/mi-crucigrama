@@ -1,5 +1,6 @@
+import streamlit as st
 import pandas as pd
-import time
+import time  
 
 # =====================================================================
 # 1. CONFIGURACIÓN DE LA PÁGINA Y ESTILOS
@@ -79,6 +80,8 @@ if 0 < st.session_state.etapa < 5:
         if tiempo_restante <= 0:
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
+            if 'respuestas_crucigrama' in st.session_state:
+                del st.session_state.respuestas_crucigrama
             st.error("⏰ ¡Te quedaste sin tiempo, vuelve a intentarlo!")
             time.sleep(3)
             st.rerun()
