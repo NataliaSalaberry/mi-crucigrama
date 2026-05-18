@@ -1,6 +1,5 @@
-import streamlit as st
 import pandas as pd
-import time  
+import time
 
 # =====================================================================
 # 1. CONFIGURACIÓN DE LA PÁGINA Y ESTILOS
@@ -70,38 +69,33 @@ st.markdown("""
 
 
 # =====================================================================
-# LÓGICA DEL CONTADOR DE TIEMPO (GLOBAL)
+# LÓGICA DEL CONTADOR DE TIEMPO (SEGURO PARA INPUTS)
 # =====================================================================
-# Solo calcula el tiempo si el juego ya comenzó (etapa > 0) y no ha terminado (etapa < 5)
 if 0 < st.session_state.etapa < 5:
     if st.session_state.tiempo_limite is not None:
         tiempo_restante = int(st.session_state.tiempo_limite - time.time())
         
-        # Verificación de Game Over por tiempo expirado
+        # Condición de fin de juego por tiempo
         if tiempo_restante <= 0:
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
             st.error("⏰ ¡Te quedaste sin tiempo, vuelve a intentarlo!")
-            time.sleep(3)  # Pausa breve para que el usuario logre leer el mensaje antes del refresh
+            time.sleep(3)
             st.rerun()
         
-        # Conversión del tiempo restante a formato MM:SS
         minutos = tiempo_restante // 60
         segundos = tiempo_restante % 60
         
-        # Renderizado estético del cronómetro en la barra lateral (Sidebar)
+        # Renderizado estático en el sidebar sin forzar bucles vacíos que borren datos
         with st.sidebar:
             st.markdown("### ⏳ Tiempo Restante")
             if tiempo_restante > 60:
                 st.metric(label="Minutos : Segundos", value=f"{minutos:02d}:{segundos:02d}")
             else:
-                # Alerta visual en rojo si queda menos de un minuto
                 st.markdown(f"<h2 style='color: #b91c1c; text-align: center;'>{minutos:02d}:{segundos:02d}</h2>", unsafe_allow_html=True)
                 st.warning("⚠️ ¡Te queda menos de un minuto!")
-            
-            # Línea divisoria y recordatorio del objetivo
             st.write("---")
-            st.caption("Resuelve todas las etapas consecutivamente antes de que el contador llegue a cero.")
+            st.caption("Nota: El tiempo se actualizará en cada una de tus acciones.")
 
 
 # =====================================================================
@@ -126,14 +120,13 @@ if st.session_state.etapa == 0:
         
         st.write("")
         if st.button("COMENZAR 🚀", type="primary", use_container_width=True):
-            # Seteamos el límite de 10 minutos (10 minutos * 60 segundos) desde este instante preciso
             st.session_state.tiempo_limite = time.time() + (10 * 60)
             st.session_state.etapa = 1
             st.rerun()
 
 
 # =====================================================================
-# ETAPA 1: EL CRUCIGRAMA
+# ETAPA 1: EL CRUCIGRAMA (CON PERSISTENCIA CORREGIDA)
 # =====================================================================
 elif st.session_state.etapa == 1:
     st.markdown("<p class='etapa-header'>📊 Etapa 1: Resolver el Crucigrama</p>", unsafe_allow_html=True)
@@ -153,7 +146,10 @@ elif st.session_state.etapa == 1:
     for i, l in enumerate(p4): solucion[(9, 6 + i)] = l
 
     max_row, max_col = 11, 18
-    user_inputs = {}
+    
+    # Inicializar el almacén persistente del crucigrama si no existe
+    if 'respuestas_crucigrama' not in st.session_state:
+        st.session_state.respuestas_crucigrama = {k: "" for k in solucion.keys()}
 
     _, center_col, _ = st.columns([1, 10, 1])
 
@@ -163,9 +159,10 @@ elif st.session_state.etapa == 1:
             for c in range(max_col):
                 with cols[c]:
                     if (r, c) in solucion:
-                        user_inputs[(r, c)] = st.text_input(
+                        # Vinculamos el valor directamente al session_state persistente
+                        st.session_state.respuestas_crucigrama[(r, c)] = st.text_input(
                             label=f"c{r}{c}",
-                            value="",
+                            value=st.session_state.respuestas_crucigrama[(r, c)],
                             max_chars=1,
                             key=f"cr_e1_{r}_{c}",
                             label_visibility="collapsed"
@@ -179,7 +176,7 @@ elif st.session_state.etapa == 1:
         btn_verificar = st.button("VERIFICAR CRUCIGRAMA", type="primary", use_container_width=True)
 
     if btn_verificar:
-        aciertos = sum(1 for (r, c), letra in user_inputs.items() if letra.strip().upper() == solucion[(r, c)])
+        aciertos = sum(1 for (r, c), letra in st.session_state.respuestas_crucigrama.items() if letra.strip().upper() == solucion[(r, c)])
         
         if aciertos == len(solucion):
             st.session_state.etapa = 2
@@ -355,4 +352,6 @@ elif st.session_state.etapa == 5:
         if st.button("🔄 Volver a jugar", type="secondary", use_container_width=True):
             st.session_state.etapa = 0
             st.session_state.tiempo_limite = None
+            if 'respuestas_crucigrama' in st.session_state:
+                del st.session_state.respuestas_crucigrama
             st.rerun()
